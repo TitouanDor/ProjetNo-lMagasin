@@ -121,25 +121,37 @@ while loop:
         liste = []; tt = 0
         while loop_commande:
             jeu = input("Saisir le nom du jeu vidéo demandé par le client (ne rien saisir puis pour achever la commande et appuyez sur 'Entrée') : ")
-            if jeu == "": loop_commande = False
+            if jeu == "": 
+                os.system("cls")
+                loop_commande = False
 
             elif jeu in jeu_video.keys():
                 quantite = False
-                while not(quantite): quantite = verification_int("Saisir la quantité voulue du jeu vidéo : ")
+                while not(quantite): 
+                    quantite = verification_int("Saisir la quantité voulue du jeu vidéo : ")
+                    os.system("cls")
+
+                if quantite == 0: print("Jeu annulé")
                 
-                if quantite <= jeu_video[jeu][0]:
+                elif quantite <= jeu_video[jeu][0]:
                     sous_commande = caisse.CommandeClient(jeu_video, jeu, quantite)
                     prix = quantite*jeu_video[jeu][1]
                     liste.append([jeu, quantite, prix])
                     tt += prix
-                else: print(f"La quantié acutelle du jeu en stock est de {jeu_video[jeu][0]}, vous en demandez trop")
+                else: 
+                    os.system("cls")
+                    print(f"La quantié acutelle du jeu en stock est de {jeu_video[jeu][0]}, vous en demandez trop")
+                    
 
-            else: print("Le jeu n'existe pas")
+            else: 
+                os.system("cls")
+                print(f"Le jeu : {jeu} n'est pas dans la base de données")
+
 
         os.system("cls")
         print("Vous avez commandé : ")
-        for e in liste: print(f"\t -{e[1]} {e[0]} pour {e[2]} €") #afficher les centimes
-        print(f"Pour un montant total de {tt} €") #afficher centimes
+        for e in liste: print(f"\t -{e[1]} {e[0]} pour {round(e[2], 2)} €") #afficher les centimes
+        print(f"Pour un montant total de {round(tt, 2)} €") #afficher centimes
 
     else: 
         os.system("cls")
