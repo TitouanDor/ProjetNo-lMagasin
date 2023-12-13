@@ -85,7 +85,8 @@ while loop:
     elif choix == "supp":
         os.system("cls")
         nom = input("Saisir le nom du jeu vidéo à supprimer: ").lower()
-        gestion.Supprimer(jeu_video, nom)
+        if nom in jeu_video.keys(): gestion.Supprimer(jeu_video, nom)
+        else: print(f"{nom} n'est pas un jeu video renseigné dans la base de données")
          
     elif choix == "changer_prix":
         prix = False
