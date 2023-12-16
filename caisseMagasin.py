@@ -5,7 +5,7 @@ def Afficher(dicoco : dict) -> None:
     Argument :
         dicoco : le dictionnaire
     """
-
+    print("Les jeux vidéos ayant une entrée dans le magasin sont : ")
     for e in dicoco.keys(): print("\t -", e)
 
 def AffichObjet(dicoco : dict, nom : str):

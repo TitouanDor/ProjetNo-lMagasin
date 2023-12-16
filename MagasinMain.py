@@ -4,7 +4,7 @@ import caisseMagasin as caisse
 import json
 import os
 
-#####fonction#####
+#region fonction#####
 def verification_float(txt : str, fois = 0)-> float:
     """
     Fonction vérifiant si la rentrer donner est bien du type float
@@ -38,13 +38,12 @@ def verification_int(txt : str, fois = 0)-> int:
         return int(a)
 
 
-
-    
+#endregion
     
 
 #####programme#####
-with open("mag.json" , "r") as f:
-    jeu_video = json.load(f)
+with open("mag.json" , "r") as f: jeu_video = json.load(f)
+
 
 """
 jeu_video = {
@@ -72,35 +71,57 @@ while loop:
 
     elif choix == "help": 
         os.system("cls")
-        print("Les commandes sont : \n\tFin : Pour mettre fin au programme\n\tAjout : Pour ajouter un nouvel jeu video au magasin\n\tSupp : Pour supprimer un jeu video du magasin\n\tChanger_Prix : Pour changer le prix d'un jeu vidéo présenté en magasin\n\tChanger_Quantité : Pour changer la quantité d'un jeu video présenté en magasin\n\tCalcul_Stock : Pour calculer le prix total du stock en magasin\n\tAfficher : Pour afficher tous les jeux vidéos en vente\n\tAfficher_Objet : Pour afficher le prix et la quantité restante d'un jeu vidéo déjà existant\n\tCommande_Client : Pour calculer le montant de la commande d'un client\n")
+        print("Les commandes sont : \n\tAjout : Pour ajouter un nouvel jeu video au magasin\n\tSupp : Pour supprimer un jeu video du magasin\n\tChanger_Prix : Pour changer le prix d'un jeu vidéo présenté en magasin\n\tChanger_Quantité : Pour changer la quantité d'un jeu video présenté en magasin\n\tCalcul_Stock : Pour calculer le prix total du stock en magasin\n\tAfficher : Pour afficher tous les jeux vidéos en vente\n\tAfficher_Objet : Pour afficher le prix et la quantité restante d'un jeu vidéo déjà existant\n\tCommande_Client : Pour calculer le montant de la commande d'un client\n\tFin : Pour mettre fin au programme\n")
 
     elif choix == "ajout":
         prix = False
         os.system("cls")
         nom = input("Saisir le nom du nouveau jeu vidéo : ").lower()
-        while not(prix):
-            prix = verification_float("Saisir le prix du nouveau jeu vidéo : ")
-        gestion.Ajouter(jeu_video, nom, prix)
+        if nom not in jeu_video.keys():
+            while not(prix): prix = verification_float("Saisir le prix du nouveau jeu vidéo : ")
+            gestion.Ajouter(jeu_video, nom, prix)
+            with open("mag.json" , "w") as f: json.dump(jeu_video , f)
+        
+        else: print(f"Le jeu : {nom}, est déjà dans la base de données (pensez a préciser le numéro du jeu )")
 
     elif choix == "supp":
-        os.system("cls")
-        nom = input("Saisir le nom du jeu vidéo à supprimer: ").lower()
-        if nom in jeu_video.keys(): gestion.Supprimer(jeu_video, nom)
-        else: print(f"{nom} n'est pas un jeu video renseigné dans la base de données")
+        loop_sup = True
+        while loop_sup == True:
+            os.system("cls")
+            caisse.Afficher(jeu_video)
+            nom = input("Saisir le nom du jeu vidéo à supprimer: ").lower()
+            if nom in jeu_video.keys(): 
+                loop_sup = False
+                gestion.Supprimer(jeu_video, nom)
+                with open("mag.json" , "w") as f: json.dump(jeu_video , f)
+            else: print(f"{nom} n'est pas un jeu video renseigné dans la base de données")
          
     elif choix == "changer_prix":
         prix = False
         os.system("cls")
+        caisse.Afficher(jeu_video)
         nom = input("Saisir le nom du jeu vidéo : ").lower()
-        while not(prix): prix = verification_float("Saisir le nouveau prix du jeu vidéo : ")
-        gestion.ChangerPrix(jeu_video, nom, prix)
+        if nom  in jeu_video.keys():
+            while not(prix): prix = verification_float("Saisir le nouveau prix du jeu vidéo : ")
+            gestion.ChangerPrix(jeu_video, nom, prix)
+            with open("mag.json" , "w") as f: json.dump(jeu_video , f)
+        
+        else: 
+            os.system("cls")
+            print(f"Le jeu : {jeu} n'est pas dans la base de données")
 
     elif choix == "changer_quantité":
         quantite = False
         os.system("cls")
+        caisse.Afficher(jeu_video)
         nom = input("Saisir le nom du jeu vidéo : ").lower()
-        while not(quantite): quantite = verification_int("Saisir la nouvelle quantite du jeu vidéo : ")
-        gestion.ChangerQt(jeu_video, nom, quantite)
+        if nom  in jeu_video.keys():
+            while not(quantite): quantite = verification_int("Saisir la nouvelle quantite du jeu vidéo : ")
+            gestion.ChangerQt(jeu_video, nom, quantite)
+            with open("mag.json" , "w") as f: json.dump(jeu_video , f)
+        else: 
+            os.system("cls")
+            print(f"Le jeu : {jeu} n'est pas dans la base de données")
 
     elif choix == "calcul_stock":
         os.system("cls")
@@ -108,18 +129,19 @@ while loop:
 
     elif choix == "afficher":
         os.system("cls")
-        print("Les jeux vidéos ayant une entrée dans le magasin sont : ")
         caisse.Afficher(jeu_video)
 
     elif choix == "afficher_objet":
         os.system("cls")
+        caisse.Afficher(jeu_video)
         nom = input("Saisir le nom du jeu vidéo : ").lower()
         caisse.AffichObjet(jeu_video, nom)
 
     elif choix == "commande_client":
-        os.system("cls")
         liste = []; tt = 0
         while loop_commande:
+            os.system("cls")
+            caisse.Afficher(jeu_video)
             jeu = input("Saisir le nom du jeu vidéo demandé par le client (ne rien saisir puis pour achever la commande et appuyez sur 'Entrée') : ")
             if jeu == "": 
                 os.system("cls")
@@ -149,6 +171,7 @@ while loop:
 
 
         os.system("cls")
+        with open("mag.json" , "w") as f: json.dump(jeu_video , f)
         print("Vous avez commandé : ")
         for e in liste: print(f"\t -{e[1]} {e[0]} pour {round(e[2], 2)} €") #afficher les centimes
         print(f"Pour un montant total de {round(tt, 2)} €") #afficher centimes
